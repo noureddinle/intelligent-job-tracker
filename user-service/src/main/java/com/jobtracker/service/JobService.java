@@ -1,0 +1,66 @@
+package com.jobtracker.service;
+
+import com.jobtracker.dto.JobRequest;
+import com.jobtracker.dto.JobResponse;
+import com.jobtracker.model.Job;
+import com.jobtracker.model.User;
+import com.jobtracker.repository.JobRepository;
+import com.jobtracker.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
+public class JobService {
+
+    private final JobRepository jobRepository;
+    private final UserRepository userRepository;
+
+    public JobResponse createJob(Long userId, JobRequest request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Job job = new Job();
+        job.setTitle(request.getTitle());
+        job.setCompany(request.getCompany());
+        job.setLocation(request.getLocation());
+        job.setStatus(request.getStatus());
+        job.setUser(user);
+
+        Job savedJob = jobRepository.save(job);
+
+        return mapToResponse(savedJob);
+    }
+
+    public List<JobResponse> getJobs(Long userId) {
+        return jobRepository.findByUserId(userId)
+                .stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+    }
+
+    public JobResponse getJobById(Long id) {
+        return jobRepository.findById(id)
+                .map(this::mapToResponse)
+                .orElseThrow(() -> new RuntimeException("Job not found"));
+    }
+
+    public void deleteJob(Long id) {
+        jobRepository.deleteById(id);
+    }
+
+    private JobResponse mapToResponse(Job job) {
+        return new JobResponse(
+                job.getId(),
+                job.getTitle(),
+                job.getCompany(),
+                job.getLocation(),
+                job.getStatus(),
+                job.getAppliedDate(),
+                job.getUser().getId()
+        );
+    }
+}

@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.jobtracker.dto.AuthResponse;
+import com.jobtracker.config.JwtUtil;
 
 import java.util.List;
 
@@ -19,7 +20,7 @@ import java.util.List;
 public class UserController {
     
     private final UserService userService;
-
+    private final JwtUtil jwtUtil;
     
     
     @PostMapping("/register")
