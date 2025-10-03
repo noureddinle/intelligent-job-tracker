@@ -1,16 +1,20 @@
 package com.jobtracker.service;
 
+import com.jobtracker.dto.ResumeResponse;
 import com.jobtracker.model.Resume;
 import com.jobtracker.model.User;
 import com.jobtracker.repository.ResumeRepository;
 import com.jobtracker.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import java.util.UUID;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -20,9 +24,13 @@ public class ResumeService {
     private final UserRepository userRepository;
     private final SupabaseStorageService supabaseStorageService;
 
-    public Resume uploadResume(Long userId, MultipartFile file) throws IOException {
+    private ResumeResponse mapToResponse(Resume resume) {
+        return new ResumeResponse(resume.getId(), resume.getFileUrl(), resume.getUser().getId());
+    }
+
+    public ResumeResponse uploadResume(Long userId, MultipartFile file) throws IOException {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
         String fileName = UUID.randomUUID() + "-" + file.getOriginalFilename();
         byte[] fileBytes = file.getBytes();
@@ -31,15 +39,21 @@ public class ResumeService {
         Resume resume = new Resume();
         resume.setUser(user);
         resume.setFileUrl(fileUrl);
-        return resumeRepository.save(resume);
+        
+        return mapToResponse(resumeRepository.save(resume));
     }
 
-    public List<Resume> getUserResumes(Long userId) {
-        return resumeRepository.findByUserId(userId);
+    public List<ResumeResponse> getUserResumes(Long userId) {
+        return resumeRepository.findByUserId(userId)
+                .stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
     }
 
-    public Resume getResume(Long id) {
+    public ResumeResponse getResume(Long id) {
         return resumeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Resume not found"));
+                .map(this::mapToResponse)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Resume not found"));
     }
+                
 }

@@ -11,7 +11,6 @@ public class Resume {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String fileName;
     private String fileUrl;
     private String fileType;
