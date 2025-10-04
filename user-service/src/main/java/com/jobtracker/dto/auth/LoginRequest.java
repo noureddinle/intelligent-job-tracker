@@ -1,4 +1,4 @@
-package com.jobtracker.dto;
+package com.jobtracker.dto.auth;
 
 public class LoginRequest {
     private String email;

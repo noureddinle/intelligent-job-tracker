@@ -1,6 +1,6 @@
 package com.jobtracker.controller;
 
-import com.jobtracker.dto.ResumeResponse;
+import com.jobtracker.dto.resume.ResumeResponse;
 import com.jobtracker.service.ResumeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

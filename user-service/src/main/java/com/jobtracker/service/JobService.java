@@ -1,7 +1,7 @@
 package com.jobtracker.service;
 
-import com.jobtracker.dto.JobRequest;
-import com.jobtracker.dto.JobResponse;
+import com.jobtracker.dto.job.JobRequest;
+import com.jobtracker.dto.job.JobResponse;
 import com.jobtracker.model.Job;
 import com.jobtracker.model.User;
 import com.jobtracker.repository.JobRepository;

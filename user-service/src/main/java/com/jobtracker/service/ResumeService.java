@@ -1,6 +1,6 @@
 package com.jobtracker.service;
 
-import com.jobtracker.dto.ResumeResponse;
+import com.jobtracker.dto.resume.ResumeResponse;
 import com.jobtracker.model.Resume;
 import com.jobtracker.model.User;
 import com.jobtracker.repository.ResumeRepository;
@@ -39,7 +39,7 @@ public class ResumeService {
         Resume resume = new Resume();
         resume.setUser(user);
         resume.setFileUrl(fileUrl);
-        
+
         return mapToResponse(resumeRepository.save(resume));
     }
 

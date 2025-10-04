@@ -1,7 +1,7 @@
 package com.jobtracker.controller;
 
-import com.jobtracker.dto.JobRequest;
-import com.jobtracker.dto.JobResponse;
+import com.jobtracker.dto.job.JobRequest;
+import com.jobtracker.dto.job.JobResponse;
 import com.jobtracker.service.JobService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
