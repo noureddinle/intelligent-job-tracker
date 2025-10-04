@@ -33,4 +33,9 @@ public class ResumeController {
     public ResponseEntity<List<ResumeResponse>> getUserResumes(@PathVariable Long userId) {
         return ResponseEntity.ok(resumeService.getUserResumes(userId));
     }
+
+    @GetMapping("/{id}/parsed")
+    public ResponseEntity<String> getResumeParsedText(@PathVariable Long id) {
+        return ResponseEntity.ok(resumeService.getResumeParsedText(id));
+    }
 }
