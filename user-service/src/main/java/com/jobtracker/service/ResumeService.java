@@ -25,10 +25,13 @@ public class ResumeService {
     private final ResumeRepository resumeRepository;
     private final UserRepository userRepository;
     private final SupabaseStorageService supabaseStorageService;
+    private final EmbeddingService embeddingService;
     private final Tika tika = new Tika();
 
+
     private ResumeResponse mapToResponse(Resume resume) {
-        return new ResumeResponse(resume.getId(), resume.getFileUrl(), resume.getUser().getId());
+        int embeddingLength = resume.getEmbedding() != null ? resume.getEmbedding().length : 0;
+        return new ResumeResponse(resume.getId(), resume.getFileUrl(), resume.getUser().getId(), "Resume uploaded successfully", "Embedding: " + embeddingLength);
     }
 
     public ResumeResponse uploadResume(Long userId, MultipartFile file) throws IOException {
@@ -46,11 +49,13 @@ public class ResumeService {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to extract text from resume" + e.getMessage());
         }
 
+        float[] embedding = embeddingService.getEmbedding(extractedText);
+
         Resume resume = new Resume();
         resume.setUser(user);
         resume.setFileUrl(fileUrl);
         resume.setParsedText(extractedText);
-
+        resume.setEmbedding(embedding);
         Resume savedResume = resumeRepository.save(resume);
         return mapToResponse(savedResume);
     }
@@ -77,5 +82,4 @@ public class ResumeService {
         Resume resume = getResumeEntity(id);
         return resume.getParsedText();
     }
-                
 }

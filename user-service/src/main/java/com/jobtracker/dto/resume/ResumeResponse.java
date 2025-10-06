@@ -9,4 +9,6 @@ public class ResumeResponse {
     private Long id;
     private String fileUrl;
     private Long userId;
+    private String message;
+    private String embeddingLenght;
 }

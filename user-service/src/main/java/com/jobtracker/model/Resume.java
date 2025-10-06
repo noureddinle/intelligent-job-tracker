@@ -25,6 +25,7 @@ public class Resume {
     @Lob
     @Column(columnDefinition = "TEXT")
     private String parsedText;
+    private float[] embedding;
 
     @Lob
     private byte[] data; 
@@ -38,4 +39,16 @@ public class Resume {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public User getUser() {
+        return user;
+    }
+    
+    public void setEmbedding(float[] embedding) {
+        this.embedding = embedding;
+    }
 }
