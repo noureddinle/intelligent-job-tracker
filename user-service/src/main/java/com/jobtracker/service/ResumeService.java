@@ -15,7 +15,11 @@ import org.apache.tika.Tika;
 import org.apache.tika.exception.TikaException;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -58,6 +62,25 @@ public class ResumeService {
         resume.setEmbedding(embedding);
         Resume savedResume = resumeRepository.save(resume);
         return mapToResponse(savedResume);
+    }
+
+    public List<Map<String, Object>> searchSimilarResumes(String queryText) {
+        float[] queryEmbedding = embeddingService.getEmbedding(queryText);
+        String embeddingString = Arrays.toString(queryEmbedding)
+        .replace("[", "(").replace("]", ")");
+
+        List<Object[]> results = resumeRepository.findSimilarResumes(embeddingString);
+
+        List<Map<String, Object>> list = new ArrayList<>();
+        for (Object[] row : results) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", row[0]);
+            map.put("file_name", row[1]);
+            map.put("file_url", row[2]);
+            map.put("similarity", row[3]);
+            list.add(map);
+        }
+        return list;
     }
 
     public List<ResumeResponse> getUserResumes(Long userId) {

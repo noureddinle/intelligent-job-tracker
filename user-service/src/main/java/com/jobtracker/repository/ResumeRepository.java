@@ -7,10 +7,16 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface ResumeRepository extends JpaRepository<Resume, Long> {
+    @Query(value = """
+            SELECT id, file_name, file_url, 1 - (embedding <=> CAST(:queryEmbedding AS vector)) AS similarity
+            from resumes
+            WHERE embedding IS NOT NULL
+            ORDER BY embedding <=> CAST(:queryEmbedding AS vector)
+            LIMIT 5;
+            """, nativeQuery = true)
+    List<Object[]> findSimilarResumes(@Param("queryEmbedding") String queryEmbedding);
     List<Resume> findByUserId(Long userId);
     List<Resume> findByParsedTextContainingIgnoreCase(String keyword);
-    @Query(value = "SELECT * FROM resumes ORDER BY embedding <-> :embedding LIMIT :topK", nativeQuery = true)
-    List<Resume> findByEmbeddingSimilar(@Param("embedding") float[] embedding, @Param("topK") int topK);
     Resume deleteResumeById(Long id);
 }
 

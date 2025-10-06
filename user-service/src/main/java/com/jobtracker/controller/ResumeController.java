@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/resumes")
@@ -43,5 +44,11 @@ public class ResumeController {
     @GetMapping("/{id}/parsed")
     public ResponseEntity<String> getResumeParsedText(@PathVariable Long id) {
         return ResponseEntity.ok(resumeService.getResumeParsedText(id));
+    }
+
+    @PostMapping("/search")
+    public List<Map<String, Object>> searchResumes(@RequestParam Map<String, String> body) {
+        String queryText = body.get("query");
+        return resumeService.searchSimilarResumes(queryText);
     }
 }

@@ -18,7 +18,7 @@ public class Job {
 
     private String company;
     private String location;
-    private String status; // Applied, Interview, Rejected, Offer
+    private String status; 
 
     private LocalDateTime appliedDate;
 
@@ -26,9 +26,29 @@ public class Job {
     @JoinColumn(name = "user_id", nullable = false)
     private User user; 
 
+    @Column(columnDefinition = "vector(768)")
+    private float[] embedding;
+
     @PrePersist
     protected void onCreate() {
         appliedDate = LocalDateTime.now();
         if (status == null) status = "Applied";
     }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setEmbedding(float[] embedding) {
+        this.embedding = embedding;
+    }
+
+    public float[] getEmbedding() {
+        return embedding;
+    }
+
 }

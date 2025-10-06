@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/jobs")
@@ -35,5 +36,11 @@ public class JobController {
     public ResponseEntity<Void> deleteJob(@PathVariable Long id) {
         jobService.deleteJob(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/search")
+    public List<Map<String, Object>> searchJobs(@RequestParam Map<String, String> body) {
+        String query = body.get("query");
+        return jobService.searchSimilarJobs(query);
     }
 }

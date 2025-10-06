@@ -8,8 +8,10 @@ import com.jobtracker.repository.JobRepository;
 import com.jobtracker.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -18,6 +20,7 @@ public class JobService {
 
     private final JobRepository jobRepository;
     private final UserRepository userRepository;
+    private final EmbeddingService embeddingService;
 
     public JobResponse createJob(Long userId, JobRequest request) {
         User user = userRepository.findById(userId)
@@ -50,6 +53,25 @@ public class JobService {
 
     public void deleteJob(Long id) {
         jobRepository.deleteById(id);
+    }
+
+    public List<Map<String, Object>> searchSimilarJobs(String queryText) {
+        float[] queryEmbedding = embeddingService.getEmbedding(queryText);
+        String embeddingString = java.util.Arrays.toString(queryEmbedding)
+                .replace("[", "(").replace("]", ")");
+
+        List<Object[]> results = jobRepository.findSimilarJobs(embeddingString);
+
+        List<Map<String, Object>> list = new ArrayList<>();
+        for (Object[] row : results) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", row[0]);
+            map.put("title", row[1]);
+            map.put("description", row[2]);
+            map.put("similarity", row[3]);
+            list.add(map);
+        }
+        return list;
     }
 
     private JobResponse mapToResponse(Job job) {
