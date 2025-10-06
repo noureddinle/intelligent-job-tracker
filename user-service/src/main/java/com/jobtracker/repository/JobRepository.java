@@ -16,6 +16,14 @@ public interface JobRepository extends JpaRepository<Job, Long> {
     WHERE embedding IS NOT NULL
     ORDER BY embedding <=> CAST(:queryEmbedding AS vector)
     LIMIT 5""", nativeQuery = true)
-
     List<Object[]> findSimilarJobs(@Param("queryEmbedding") String queryEmbedding);
+
+    @Query(value = """
+    SELECT id, title, description, 1 - (embedding <=> :resumeEmbedding) AS similarity
+    FROM jobs
+    WHERE embedding IS NOT NULL
+    ORDER BY embedding <=> :resumeEmbedding
+    LIMIT 5;
+    """, nativeQuery = true)
+    List<Object[]> findJobsByResumeEmbedding(@Param("resumeEmbedding") String resumeEmbedding);
 }
