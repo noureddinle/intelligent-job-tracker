@@ -2,9 +2,14 @@ package com.jobtracker.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 
 @Entity
+@Getter
+@Setter
 @Table(name = "resumes")
 @Data
 public class Resume {
@@ -12,6 +17,7 @@ public class Resume {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String fileName;
     private String fileUrl;
     private String fileType;
@@ -25,6 +31,8 @@ public class Resume {
     @Lob
     @Column(columnDefinition = "TEXT")
     private String parsedText;
+
+    @Column(columnDefinition = "vector(768)")
     private float[] embedding;
 
     @Lob
@@ -47,7 +55,7 @@ public class Resume {
     public User getUser() {
         return user;
     }
-    
+
     public void setEmbedding(float[] embedding) {
         this.embedding = embedding;
     }

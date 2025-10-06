@@ -2,16 +2,16 @@ version: '3.8'
 
 services:
   postgres:
-    image: postgres:15-alpine
-    container_name: jobtracker-postgres
+    image: ankane/pgvector
+    container_name: jobtracker-db
     environment:
       POSTGRES_DB: jobtracker
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 7ALt9awd369@
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql/data
 
   pgadmin:
     image: dpage/pgadmin4
@@ -25,4 +25,4 @@ services:
       - postgres
 
 volumes:
-  postgres_data:
+  pgdata:

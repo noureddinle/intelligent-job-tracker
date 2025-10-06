@@ -73,6 +73,13 @@ public class ResumeService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Resume not found"));
     }
 
+    public List<ResumeResponse> getAllResumes() {
+        return resumeRepository.findAll()
+                .stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+    }
+
     public Resume getResumeEntity(Long id) {
         return resumeRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Resume not found"));

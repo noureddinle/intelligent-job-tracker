@@ -17,6 +17,12 @@ public class ResumeController {
 
     private final ResumeService resumeService;
 
+    @GetMapping
+    public ResponseEntity<List<ResumeResponse>> getAllResumes() {
+        List<ResumeResponse> resumes = resumeService.getAllResumes();
+        return ResponseEntity.ok(resumes);
+    }
+
     @PostMapping("/upload/{userId}")
     public ResponseEntity<ResumeResponse> uploadResume(
             @PathVariable Long userId,
