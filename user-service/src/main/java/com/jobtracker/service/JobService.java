@@ -7,11 +7,11 @@ import com.jobtracker.model.User;
 import com.jobtracker.repository.JobRepository;
 import com.jobtracker.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,7 +24,7 @@ public class JobService {
 
     public JobResponse createJob(Long userId, JobRequest request) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
         Job job = new Job();
         job.setTitle(request.getTitle());
@@ -33,8 +33,11 @@ public class JobService {
         job.setStatus(request.getStatus());
         job.setUser(user);
 
-        Job savedJob = jobRepository.save(job);
+        String description = request.getDescription() != null ? request.getDescription() : "";
+        float[] embedding = embeddingService.getEmbedding(description);
+        job.setEmbedding(embedding);
 
+        Job savedJob = jobRepository.save(job);
         return mapToResponse(savedJob);
     }
 
@@ -48,17 +51,21 @@ public class JobService {
     public JobResponse getJobById(Long id) {
         return jobRepository.findById(id)
                 .map(this::mapToResponse)
-                .orElseThrow(() -> new RuntimeException("Job not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Job not found"));
     }
 
     public void deleteJob(Long id) {
+        if (!jobRepository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Job not found");
+        }
         jobRepository.deleteById(id);
     }
 
+    // 🔍 Semantic search for jobs by text query
     public List<Map<String, Object>> searchSimilarJobs(String queryText) {
         float[] queryEmbedding = embeddingService.getEmbedding(queryText);
-        String embeddingString = java.util.Arrays.toString(queryEmbedding)
-                .replace("[", "(").replace("]", ")");
+        String embeddingString = "ARRAY" + java.util.Arrays.toString(queryEmbedding)
+                .replace("[", "[").replace("]", "]");
 
         List<Object[]> results = jobRepository.findSimilarJobs(embeddingString);
 

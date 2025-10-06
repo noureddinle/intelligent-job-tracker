@@ -40,7 +40,7 @@ public class MatchingService {
             matches.add(job);
         }
 
-        return matches;
+        return matches.stream().filter(job -> (Double) job.get("similarity") > 0.75).toList();
     }
 
     public List<Map<String, Object>> matchJobsToResume(Long jobId) {
@@ -68,6 +68,6 @@ public class MatchingService {
             matches.add(resume);
         }
 
-        return matches;
+        return matches.stream().filter(resume -> (Double) resume.get("similarity") > 0.75).toList();
     }
 }

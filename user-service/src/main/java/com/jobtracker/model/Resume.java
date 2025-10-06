@@ -1,17 +1,16 @@
 package com.jobtracker.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
+import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
-@Getter
-@Setter
 @Table(name = "resumes")
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Resume {
 
     @Id
@@ -21,22 +20,23 @@ public class Resume {
     private String fileName;
     private String fileUrl;
     private String fileType;
-    private LocalDateTime uploadedAt;
 
-    @PrePersist
-    protected void onCreate() {
-        uploadedAt = LocalDateTime.now();
-    }
+    @Column(name = "uploaded_at")
+    private LocalDateTime uploadedAt;
 
     @Lob
     @Column(columnDefinition = "TEXT")
     private String parsedText;
 
+    // 🧠 Embedding vector for semantic similarity
     @Column(columnDefinition = "vector(768)")
     private float[] embedding;
 
+    // Store raw binary (if you want to allow downloads)
     @Lob
-    private byte[] data; 
+    private byte[] data;
+
+    // Extracted job-related metadata
     private String jobTitle;
     private String jobLocation;
     private String jobDescription;
@@ -44,19 +44,24 @@ public class Resume {
     private String jobUrl;
     private String jobSalary;
 
+    // Link to the user who uploaded the resume
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    public void setUser(User user) {
-        this.user = user;
+    @PrePersist
+    protected void onCreate() {
+        uploadedAt = LocalDateTime.now();
     }
 
-    public User getUser() {
-        return user;
-    }
-
-    public void setEmbedding(float[] embedding) {
-        this.embedding = embedding;
+    // Optional: cleaner toString() for debugging
+    @Override
+    public String toString() {
+        return "Resume{" +
+                "id=" + id +
+                ", fileName='" + fileName + '\'' +
+                ", userId=" + (user != null ? user.getId() : null) +
+                ", uploadedAt=" + uploadedAt +
+                '}';
     }
 }

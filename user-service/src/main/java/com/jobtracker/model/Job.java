@@ -2,11 +2,15 @@ package com.jobtracker.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "jobs")
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Job {
 
     @Id
@@ -18,37 +22,42 @@ public class Job {
 
     private String company;
     private String location;
-    private String status; 
 
+    @Column(columnDefinition = "TEXT")
+    private String description;
+
+    private String jobUrl;
+    private String salary;
+    private String status;
+
+    @Column(name = "applied_date")
     private LocalDateTime appliedDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    private User user; 
+    private User user;
 
+    // 🧠 Embedding vector for semantic search
     @Column(columnDefinition = "vector(768)")
     private float[] embedding;
 
+    // Automatically set defaults before insertion
     @PrePersist
     protected void onCreate() {
         appliedDate = LocalDateTime.now();
-        if (status == null) status = "Applied";
+        if (status == null) status = "Open";
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    // Optional: readable toString without embedding noise
+    @Override
+    public String toString() {
+        return "Job{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", company='" + company + '\'' +
+                ", location='" + location + '\'' +
+                ", status='" + status + '\'' +
+                ", appliedDate=" + appliedDate +
+                '}';
     }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setEmbedding(float[] embedding) {
-        this.embedding = embedding;
-    }
-
-    public float[] getEmbedding() {
-        return embedding;
-    }
-
 }

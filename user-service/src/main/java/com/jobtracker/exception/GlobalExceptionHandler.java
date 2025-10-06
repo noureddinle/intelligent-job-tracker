@@ -29,7 +29,13 @@ public class GlobalExceptionHandler {
         error.put("timestamp", LocalDateTime.now());
         error.put("status", HttpStatus.BAD_REQUEST.value());
         error.put("error", "Validation Failed");
-        error.put("message", ex.getBindingResult().getFieldError().getDefaultMessage());
+        String message;
+        if (ex.getBindingResult().getFieldError() != null) {
+            message = ex.getBindingResult().getFieldError().getDefaultMessage();
+        } else {
+            message = "Validation error";
+        }
+        error.put("message", message);
         return ResponseEntity.badRequest().body(error);
     }
 
