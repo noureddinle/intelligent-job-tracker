@@ -2,6 +2,8 @@ package com.jobtracker.controller;
 
 import com.jobtracker.service.MatchingService;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,13 +16,18 @@ public class MatchingController {
 
     private final MatchingService matchingService;
 
+    @GetMapping("/")
+    public ResponseEntity<String> match() {
+        return ResponseEntity.ok("Matching API");
+    }
+
     @GetMapping("/resume-to-jobs/{resumeId}")
-    public List<Map<String, Object>> matchResumeToJobs(@PathVariable Long resumeId) {
-        return matchingService.matchResumeToJobs(resumeId);
+    public ResponseEntity<List<Map<String, Object>>> matchResumeToJobs(@PathVariable Long resumeId) {
+        return ResponseEntity.ok(matchingService.matchResumeToJobs(resumeId));
     }
 
     @GetMapping("/jobs-to-resume/{jobId}")
-    public List<Map<String, Object>> matchJobsToResume(@PathVariable Long jobId) {
-        return matchingService.matchJobsToResume(jobId);
+    public ResponseEntity<List<Map<String, Object>>> matchJobsToResume(@PathVariable Long jobId) {
+        return ResponseEntity.ok(matchingService.matchJobsToResume(jobId));
     }
 }

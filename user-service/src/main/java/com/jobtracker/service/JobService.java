@@ -61,7 +61,6 @@ public class JobService {
         jobRepository.deleteById(id);
     }
 
-    // 🔍 Semantic search for jobs by text query
     public List<Map<String, Object>> searchSimilarJobs(String queryText) {
         float[] queryEmbedding = embeddingService.getEmbedding(queryText);
         String embeddingString = "ARRAY" + java.util.Arrays.toString(queryEmbedding)

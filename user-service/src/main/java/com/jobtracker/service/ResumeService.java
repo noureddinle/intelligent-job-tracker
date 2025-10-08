@@ -5,6 +5,8 @@ import com.jobtracker.model.Resume;
 import com.jobtracker.model.User;
 import com.jobtracker.repository.ResumeRepository;
 import com.jobtracker.repository.UserRepository;
+
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
@@ -58,6 +60,8 @@ public class ResumeService {
         Resume resume = new Resume();
         resume.setUser(user);
         resume.setFileUrl(fileUrl);
+        resume.setFileType(file.getContentType());
+        resume.setFileName(file.getOriginalFilename());
         resume.setParsedText(extractedText);
         resume.setEmbedding(embedding);
         Resume savedResume = resumeRepository.save(resume);
@@ -96,6 +100,7 @@ public class ResumeService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Resume not found"));
     }
 
+    @Transactional(readOnly = true)
     public List<ResumeResponse> getAllResumes() {
         return resumeRepository.findAll()
                 .stream()

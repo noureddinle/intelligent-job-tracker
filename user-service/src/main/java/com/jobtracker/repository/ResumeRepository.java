@@ -9,7 +9,6 @@ import java.util.List;
 
 public interface ResumeRepository extends JpaRepository<Resume, Long> {
 
-    // 🔍 Search resumes semantically similar to a given query text
     @Query(value = """
         SELECT 
             id, 
@@ -22,8 +21,6 @@ public interface ResumeRepository extends JpaRepository<Resume, Long> {
         LIMIT 5
         """, nativeQuery = true)
     List<Object[]> findSimilarResumes(@Param("queryEmbedding") String queryEmbedding);
-
-    // 🤝 Find top resumes similar to a specific job’s embedding
     @Query(value = """
         SELECT 
             id, 
@@ -37,8 +34,6 @@ public interface ResumeRepository extends JpaRepository<Resume, Long> {
         LIMIT 5
         """, nativeQuery = true)
     List<Object[]> findResumesByJobEmbedding(@Param("jobEmbedding") String jobEmbedding);
-
     List<Resume> findByUserId(Long userId);
     List<Resume> findByParsedTextContainingIgnoreCase(String keyword);
-    Resume deleteResumeById(Long id);
 }
