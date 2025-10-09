@@ -39,8 +39,19 @@ public class JobController {
     }
 
     @PostMapping("/search")
-    public List<Map<String, Object>> searchJobs(@RequestParam Map<String, String> body) {
+    public ResponseEntity<List<Map<String, Object>>> searchJobs(@RequestParam Map<String, String> body) {
         String query = body.get("query");
-        return jobService.searchSimilarJobs(query);
+        if (query == null || query.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+        Double threshold = Double.parseDouble(body.get("threshold"));
+        if (threshold == null || threshold < 0 || threshold > 1) {
+            return ResponseEntity.badRequest().build();
+        }
+        Integer limit = Integer.parseInt(body.get("limit"));
+        if (limit == null || limit <= 0) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(jobService.searchSimilarJobs(query, threshold, limit));
     }
 }

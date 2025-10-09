@@ -30,8 +30,9 @@ public class GlobalExceptionHandler {
         error.put("status", HttpStatus.BAD_REQUEST.value());
         error.put("error", "Validation Failed");
         String message;
-        if (ex.getBindingResult().getFieldError() != null) {
-            message = ex.getBindingResult().getFieldError().getDefaultMessage();
+        var fieldError = ex.getBindingResult().getFieldError();
+        if (fieldError != null) {
+            message = fieldError.getDefaultMessage();
         } else {
             message = "Validation error";
         }

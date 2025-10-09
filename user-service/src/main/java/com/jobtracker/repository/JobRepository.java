@@ -13,27 +13,27 @@ public interface JobRepository extends JpaRepository<Job, Long> {
 
     @Query(value = """
         SELECT 
-            id, 
-            title, 
-            company,
+            j.id, 
+            j.title, 
+            j.company,
             1 - (embedding <=> CAST(:queryEmbedding AS vector)) AS similarity
-        FROM jobs
-        WHERE embedding IS NOT NULL
-        ORDER BY embedding <=> CAST(:queryEmbedding AS vector)
-        LIMIT 5
+        FROM jobs j
+        WHERE j.embedding IS NOT NULL
+        ORDER BY j.embedding <=> CAST(:queryEmbedding AS vector)
+        LIMIT :limit
         """, nativeQuery = true)
-    List<Object[]> findSimilarJobs(@Param("queryEmbedding") String queryEmbedding);
+    List<Object[]> findSimilarJobs(@Param("queryEmbedding") String queryEmbedding, @Param("limit") Integer limit);
 
     @Query(value = """
         SELECT 
-            id, 
-            title, 
-            company,
-            1 - (embedding <=> CAST(:resumeEmbedding AS vector)) AS similarity
-        FROM jobs
-        WHERE embedding IS NOT NULL
-        ORDER BY embedding <=> CAST(:resumeEmbedding AS vector)
-        LIMIT 5
+            j.id, 
+            j.title, 
+            j.company,
+            1 - (j.embedding <=> CAST(:resumeEmbedding AS vector)) AS similarity
+        FROM jobs j
+        WHERE j.embedding IS NOT NULL
+        ORDER BY j.embedding <=> CAST(:resumeEmbedding AS vector)
+        LIMIT :limit
         """, nativeQuery = true)
-    List<Object[]> findJobsByResumeEmbedding(@Param("resumeEmbedding") String resumeEmbedding);
+    List<Object[]> findJobsByResumeEmbedding(@Param("resumeEmbedding") String resumeEmbedding, @Param("limit") Integer limit);
 }

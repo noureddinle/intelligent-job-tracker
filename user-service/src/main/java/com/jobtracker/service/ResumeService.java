@@ -15,9 +15,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.UUID;
 import org.apache.tika.Tika;
 import org.apache.tika.exception.TikaException;
+import java.util.stream.IntStream;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -68,11 +68,14 @@ public class ResumeService {
         return mapToResponse(savedResume);
     }
 
-    public List<Map<String, Object>> searchSimilarResumes(String queryText) {
+    public List<Map<String, Object>> searchSimilarResumes(String queryText, Double threshold, Integer limit) {
         float[] queryEmbedding = embeddingService.getEmbedding(queryText);
-        String embeddingString = Arrays.toString(queryEmbedding);
+        String embeddingString = "[" + IntStream.range(0, queryEmbedding.length)
+            .mapToObj(i -> Float.toString(queryEmbedding[i]))
+            .collect(Collectors.joining(", ")) + "]";
 
-        List<Object[]> results = resumeRepository.findSimilarResumes(embeddingString);
+
+        List<Object[]> results = resumeRepository.findSimilarResumes(embeddingString, limit);
 
         List<Map<String, Object>> list = new ArrayList<>();
         for (Object[] row : results) {

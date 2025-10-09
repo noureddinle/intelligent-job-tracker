@@ -12,11 +12,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
@@ -65,10 +65,12 @@ public class JobService {
         jobRepository.deleteById(id);
     }
 
-    public List<Map<String, Object>> searchSimilarJobs(String queryText) {
+    public List<Map<String, Object>> searchSimilarJobs(String queryText, Double threshold, Integer limit) {
         float[] queryEmbedding = embeddingService.getEmbedding(queryText);
-        String embeddingString = Arrays.toString(queryEmbedding);
-        List<Object[]> results = jobRepository.findSimilarJobs(embeddingString);
+        String embeddingString = "[" + IntStream.range(0, queryEmbedding.length)
+            .mapToObj(i -> Float.toString(queryEmbedding[i]))
+            .collect(Collectors.joining(", ")) + "]";
+        List<Object[]> results = jobRepository.findSimilarJobs(embeddingString, limit);
 
         List<Map<String, Object>> list = new ArrayList<>();
         for (Object[] row : results) {

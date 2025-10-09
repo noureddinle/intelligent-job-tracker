@@ -11,29 +11,30 @@ public interface ResumeRepository extends JpaRepository<Resume, Long> {
 
     @Query(value = """
         SELECT 
-            id, 
-            file_name, 
-            file_url, 
-            1 - (embedding <=> CAST(:queryEmbedding AS vector)) AS similarity
-        FROM resumes
-        WHERE embedding IS NOT NULL
-        ORDER BY embedding <=> CAST(:queryEmbedding AS vector)
-        LIMIT 5
+            r.id, 
+            r.file_name, 
+            r.file_url, 
+            1 - (r.embedding <=> CAST(:queryEmbedding AS vector)) AS similarity
+        FROM resumes r
+        WHERE r.embedding IS NOT NULL
+        ORDER BY r.embedding <=> CAST(:queryEmbedding AS vector)
+        LIMIT :limit
         """, nativeQuery = true)
-    List<Object[]> findSimilarResumes(@Param("queryEmbedding") String queryEmbedding);
+    List<Object[]> findSimilarResumes(@Param("queryEmbedding") String queryEmbedding, @Param("limit") Integer limit);
     @Query(value = """
         SELECT 
-            id, 
-            user_id, 
-            file_name, 
-            file_url, 
-            1 - (embedding <=> CAST(:jobEmbedding AS vector)) AS similarity
-        FROM resumes
-        WHERE embedding IS NOT NULL
-        ORDER BY embedding <=> CAST(:jobEmbedding AS vector)
-        LIMIT 5
+            r.id, 
+            r.user_id, 
+            r.file_type,
+            r.file_name, 
+            r.file_url, 
+            1 - (r.embedding <=> CAST(:jobEmbedding AS vector)) AS similarity
+        FROM resumes r
+        WHERE r.embedding IS NOT NULL
+        ORDER BY r.embedding <=> CAST(:jobEmbedding AS vector)
+        LIMIT :limit
         """, nativeQuery = true)
-    List<Object[]> findResumesByJobEmbedding(@Param("jobEmbedding") String jobEmbedding);
+    List<Object[]> findResumesByJobEmbedding(@Param("jobEmbedding") String jobEmbedding, @Param("limit") Integer limit);
     List<Resume> findByUserId(Long userId);
     List<Resume> findByParsedTextContainingIgnoreCase(String keyword);
 }

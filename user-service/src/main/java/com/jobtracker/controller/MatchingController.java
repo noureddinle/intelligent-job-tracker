@@ -22,12 +22,12 @@ public class MatchingController {
     }
 
     @GetMapping("/resume-to-jobs/{resumeId}")
-    public ResponseEntity<List<Map<String, Object>>> matchResumeToJobs(@PathVariable Long resumeId) {
-        return ResponseEntity.ok(matchingService.matchResumeToJobs(resumeId));
+    public ResponseEntity<List<Map<String, Object>>> matchResumeToJobs(@PathVariable Long resumeId, @RequestParam Integer limit) {
+        return ResponseEntity.ok(matchingService.matchResumeToJobs(resumeId, limit));
     }
 
     @GetMapping("/jobs-to-resume/{jobId}")
-    public ResponseEntity<List<Map<String, Object>>> matchJobsToResume(@PathVariable Long jobId) {
-        return ResponseEntity.ok(matchingService.matchJobsToResume(jobId));
+    public ResponseEntity<List<Map<String, Object>>> matchJobsToResume(@PathVariable Long jobId, @RequestParam Integer limit) {
+        return ResponseEntity.ok(matchingService.matchJobsToResume(jobId, limit));
     }
 }

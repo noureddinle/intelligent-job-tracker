@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import java.util.*;
 
@@ -18,7 +20,7 @@ public class MatchingService {
     private final ResumeRepository resumeRepository;
     private final JobRepository jobRepository;
 
-    public List<Map<String, Object>> matchResumeToJobs(Long resumeId) {
+    public List<Map<String, Object>> matchResumeToJobs(Long resumeId, Integer limit) {
         Resume resume = resumeRepository.findById(resumeId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Resume not found"));
 
@@ -26,9 +28,11 @@ public class MatchingService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Resume does not have an embedding");
         }
 
-        String embeddingString = Arrays.toString(resume.getEmbedding());
+        String embeddingString = "[" + IntStream.range(0, resume.getEmbedding().length)
+            .mapToObj(i -> Float.toString(resume.getEmbedding()[i]))
+            .collect(Collectors.joining(", ")) + "]";
 
-        List<Object[]> results = jobRepository.findJobsByResumeEmbedding(embeddingString);
+        List<Object[]> results = jobRepository.findJobsByResumeEmbedding(embeddingString, limit);
 
         List<Map<String, Object>> matches = new ArrayList<>();
         for (Object[] row : results) {
@@ -51,7 +55,7 @@ public class MatchingService {
                 .toList();
     }
 
-    public List<Map<String, Object>> matchJobsToResume(Long jobId) {
+    public List<Map<String, Object>> matchJobsToResume(Long jobId, Integer limit) {
         Job job = jobRepository.findById(jobId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Job not found"));
 
@@ -59,9 +63,11 @@ public class MatchingService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Job does not have an embedding");
         }
 
-        String embeddingString = Arrays.toString(job.getEmbedding());
+        String embeddingString = "[" + IntStream.range(0, job.getEmbedding().length)
+            .mapToObj(i -> Float.toString(job.getEmbedding()[i]))
+            .collect(Collectors.joining(", ")) + "]";
 
-        List<Object[]> results = resumeRepository.findResumesByJobEmbedding(embeddingString);
+        List<Object[]> results = resumeRepository.findResumesByJobEmbedding(embeddingString, limit);
 
         List<Map<String, Object>> matches = new ArrayList<>();
         for (Object[] row : results) {
