@@ -26,9 +26,7 @@ public class MatchingService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Resume does not have an embedding");
         }
 
-        String embeddingString = Arrays.toString(resume.getEmbedding())
-                .replace("[", "[")
-                .replace("]", "]");
+        String embeddingString = Arrays.toString(resume.getEmbedding());
 
         List<Object[]> results = jobRepository.findJobsByResumeEmbedding(embeddingString);
 
@@ -61,9 +59,7 @@ public class MatchingService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Job does not have an embedding");
         }
 
-        String embeddingString = "ARRAY" + Arrays.toString(job.getEmbedding())
-                .replace("[", "[")
-                .replace("]", "]");
+        String embeddingString = Arrays.toString(job.getEmbedding());
 
         List<Object[]> results = resumeRepository.findResumesByJobEmbedding(embeddingString);
 

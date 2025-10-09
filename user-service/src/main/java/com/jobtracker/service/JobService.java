@@ -11,7 +11,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -63,9 +67,7 @@ public class JobService {
 
     public List<Map<String, Object>> searchSimilarJobs(String queryText) {
         float[] queryEmbedding = embeddingService.getEmbedding(queryText);
-        String embeddingString = "ARRAY" + java.util.Arrays.toString(queryEmbedding)
-                .replace("[", "[").replace("]", "]");
-
+        String embeddingString = Arrays.toString(queryEmbedding);
         List<Object[]> results = jobRepository.findSimilarJobs(embeddingString);
 
         List<Map<String, Object>> list = new ArrayList<>();

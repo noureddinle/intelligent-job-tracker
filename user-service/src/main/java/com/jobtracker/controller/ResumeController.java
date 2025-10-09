@@ -47,8 +47,11 @@ public class ResumeController {
     }
 
     @PostMapping("/search")
-    public List<Map<String, Object>> searchResumes(@RequestParam Map<String, String> body) {
+    public ResponseEntity<List<Map<String, Object>>> searchResumes(@RequestBody Map<String, String> body) {
         String queryText = body.get("query");
-        return resumeService.searchSimilarResumes(queryText);
+        if (queryText == null || queryText.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(resumeService.searchSimilarResumes(queryText));
     }
 }

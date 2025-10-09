@@ -70,8 +70,7 @@ public class ResumeService {
 
     public List<Map<String, Object>> searchSimilarResumes(String queryText) {
         float[] queryEmbedding = embeddingService.getEmbedding(queryText);
-        String embeddingString = Arrays.toString(queryEmbedding)
-        .replace("[", "(").replace("]", ")");
+        String embeddingString = Arrays.toString(queryEmbedding);
 
         List<Object[]> results = resumeRepository.findSimilarResumes(embeddingString);
 
