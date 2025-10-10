@@ -25,22 +25,22 @@ services:
     volumes:
       - ./servers.json:/pgadmin4/servers.json
       - pgadmin_data:/var/lib/pgadmin
+
   python:
-    build:
-      context: ./python-embedding 
+    build: ./python-service   # ✅ Use your Dockerfile in python-service/
     container_name: jobtracker-python
     working_dir: /app
     environment:
       PYTHONUNBUFFERED: 1
       EMBEDDING_MODEL: sentence-transformers/all-mpnet-base-v2
-    volumes:
-      - ./ml:/app
+    ports:
+      - "8001:8001"
     depends_on:
       - postgres
+
   spring:
     build:
       context: ./user-service
-    image: openjdk:17-jdk-slim
     container_name: jobtracker-spring
     environment:
       SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
@@ -52,6 +52,7 @@ services:
       SUPABASE_BUCKET: ${SUPABASE_BUCKET}
       SUPABASE_SERVICE_KEY: ${SUPABASE_SERVICE_KEY}
       SUPABASE_PUBLIC_KEY: ${SUPABASE_PUBLIC_KEY}
+      PYTHON_SERVICE_URL: ${PYTHON_SERVICE_URL}
     working_dir: /app/user-service
     volumes:
       - ./:/app

@@ -29,6 +29,7 @@ public class User {
 
     private String phone;
 
+    @Column(nullable = false)
     private String role;
 
     @Column(name = "created_at", updatable = false)
@@ -52,6 +53,8 @@ public class User {
                 "id=" + id +
                 ", email='" + email + '\'' +
                 ", fullName='" + fullName + '\'' +
+                ", phone='" + phone + '\'' +
+                ", role='" + role + '\'' +
                 ", createdAt=" + createdAt +
                 '}';
     }

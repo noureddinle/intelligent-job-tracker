@@ -8,7 +8,6 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface ResumeRepository extends JpaRepository<Resume, Long> {
-
     @Query(value = """
         SELECT 
             r.id, 
