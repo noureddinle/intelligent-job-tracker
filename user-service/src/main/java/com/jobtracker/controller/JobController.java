@@ -17,6 +17,7 @@ public class JobController {
 
     private final JobService jobService;
 
+
     @PostMapping("/user/{userId}")
     public ResponseEntity<JobResponse> createJob(@PathVariable Long userId, @RequestBody JobRequest request) {
         return ResponseEntity.ok(jobService.createJob(userId, request));
@@ -39,18 +40,18 @@ public class JobController {
     }
 
     @PostMapping("/search")
-    public ResponseEntity<List<Map<String, Object>>> searchJobs(@RequestParam Map<String, String> body) {
+    public ResponseEntity<List<Map<String, Object>>> searchJobs(@RequestBody Map<String, String> body) {
         String query = body.get("query");
         if (query == null || query.isEmpty()) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body(List.of(Map.of("error", "Query is required")));
         }
         Double threshold = Double.parseDouble(body.get("threshold"));
         if (threshold == null || threshold < 0 || threshold > 1) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body(List.of(Map.of("error", "Threshold must be between 0 and 1")));
         }
         Integer limit = Integer.parseInt(body.get("limit"));
         if (limit == null || limit <= 0) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body(List.of(Map.of("error", "Limit must be greater than 0")));
         }
         return ResponseEntity.ok(jobService.searchSimilarJobs(query, threshold, limit));
     }

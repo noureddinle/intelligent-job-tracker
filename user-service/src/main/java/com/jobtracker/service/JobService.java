@@ -73,12 +73,17 @@ public class JobService {
         List<Object[]> results = jobRepository.findSimilarJobs(embeddingString, limit);
 
         List<Map<String, Object>> list = new ArrayList<>();
+        int rank = 1;
         for (Object[] row : results) {
             Map<String, Object> map = new HashMap<>();
+            map.put("rank", rank++);
             map.put("id", row[0]);
             map.put("title", row[1]);
-            map.put("description", row[2]);
-            map.put("similarity", row[3]);
+            map.put("company", row[2]);
+            map.put("location", row[3]);
+            map.put("description", row[4]);
+            map.put("similarity", Math.round(((Double) row[5]) * 100.0) / 10.0 + "%");
+
             list.add(map);
         }
         return list;

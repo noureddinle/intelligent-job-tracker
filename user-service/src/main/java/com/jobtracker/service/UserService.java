@@ -32,7 +32,7 @@ public class UserService {
 
         User user = new User();
         user.setEmail(request.getEmail());
-        user.setPassword(passwordEncoder.encode(request.getPassword())); // hash password
+        user.setPassword(passwordEncoder.encode(request.getPassword())); 
         user.setFullName(request.getFullName());
         user.setPhone(request.getPhone());
 

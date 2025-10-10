@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface JobRepository extends JpaRepository<Job, Long> {
-
+    @Query("SELECT j FROM Job j WHERE j.user.id = :userId")
     List<Job> findByUserId(Long userId);
 
     @Query(value = """
@@ -16,6 +16,8 @@ public interface JobRepository extends JpaRepository<Job, Long> {
             j.id, 
             j.title, 
             j.company,
+            j.location,
+            j.description,
             1 - (embedding <=> CAST(:queryEmbedding AS vector)) AS similarity
         FROM jobs j
         WHERE j.embedding IS NOT NULL
@@ -29,6 +31,8 @@ public interface JobRepository extends JpaRepository<Job, Long> {
             j.id, 
             j.title, 
             j.company,
+            j.location,
+            j.description,
             1 - (j.embedding <=> CAST(:resumeEmbedding AS vector)) AS similarity
         FROM jobs j
         WHERE j.embedding IS NOT NULL

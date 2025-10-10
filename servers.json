@@ -1,0 +1,13 @@
+{
+  "Servers": {
+    "1": {
+      "Name": "jobtracker-docker",
+      "Group": "Seconde Server",
+      "Host": "localhost",
+      "Port": 5432,
+      "MaintenanceDB": "jobtracker",
+      "Username": "postgres",
+      "SSLMode": "prefer"
+    }
+  }
+}
