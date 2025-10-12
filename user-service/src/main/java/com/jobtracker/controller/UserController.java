@@ -1,9 +1,5 @@
 package com.jobtracker.controller;
 
-import com.jobtracker.dto.auth.AuthResponse;
-import com.jobtracker.dto.auth.LoginRequest;
-import com.jobtracker.dto.auth.RegisterRequest;
-import com.jobtracker.dto.user.UserResponse;
 import com.jobtracker.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +8,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.jobtracker.config.JwtUtil;
+import com.jobtracker.dto.auth.AuthResponse;
+import com.jobtracker.dto.auth.LoginRequest;
+import com.jobtracker.dto.auth.RegisterRequest;
+import com.jobtracker.dto.user.UserResponse;
 
 import java.util.List;
 
