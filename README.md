@@ -249,7 +249,7 @@ docker logs jobtracker-python
 
 ## 📜 License
 
-MIT License © 2025 Othman Essaadi
+MIT License © 2025 noureddinle
 
 ---
 
